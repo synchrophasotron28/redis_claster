@@ -1,0 +1,3 @@
+[console_scripts]
+redis-tool = cli.__main__:main
+

@@ -1,0 +1,57 @@
+Инициализация контейнеров:
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_cr redis redis-server /usr/local/etc/redis/servers_redis/c_replic.conf
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_br redis redis-server /usr/local/etc/redis/servers_redis/b_replic.conf
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_ar redis redis-server /usr/local/etc/redis/servers_redis/a_replic.conf
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_c redis redis-server /usr/local/etc/redis/servers_redis/c_master.conf
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_b redis redis-server /usr/local/etc/redis/servers_redis/b_master.conf
+
+docker run -dt -v $PWD/servers_redis:/usr/local/etc/redis/servers_redis --net=host --name redis_server_a redis redis-server /usr/local/etc/redis/servers_redis/a_master.conf
+
+
+Поднятие кластера:
+docker run -dt --net=host --name redis_control redis redis-cli --cluster create 127.0.0.1:6379 127.0.0.1:6380 127.0.0.1:6381 127.0.0.1:6382 127.0.0.1:6383 127.0.0.1:6384 --cluster-replicas 1 --verbose --cluster-yes
+docker ps -a
+
+
+Остановка и удаление контейнеров:
+docker stop redis_control
+docker stop redis_server_a
+docker stop redis_server_b
+docker stop redis_server_c
+docker stop redis_server_ar
+docker stop redis_server_br
+docker stop redis_server_cr
+docker rm redis_control
+docker rm redis_server_a
+docker rm redis_server_b
+docker rm redis_server_c
+docker rm redis_server_ar
+docker rm redis_server_br
+docker rm redis_server_cr
+docker ps -a
+
+
+
+Команды для остановки локального редиса, чтобы не было конфликтов портов:
+sudo systemctl stop redis
+sudo systemctl status redis
+
+Полезные команды:
+ sudo systemctl status redis (статус редиса)
+ redis-cli -h 127.0.0.1 -p 6380 (проверяем cli)
+
+Запуск приложения:
+python3 weather_service.py
+
+Команды для экспорта переменных окружения:
+export FLASK_RUN_PORT=5000
+export URL="http://api.weatherapi.com/v1/forecast.json?key=92b2b54828074632897211731232702&q={}&days=14"
+export FLASK_APP = weather_service.py
+
+Команда проверки логов:
+docker logs 99ff4f23ac22
